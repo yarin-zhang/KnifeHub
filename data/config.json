@@ -1,0 +1,12 @@
+{
+    "scripts": [
+      {
+        "name": "hello_world",
+        "install_on_startup": true
+      },
+      {
+        "name": "print_time",
+        "install_on_startup": true
+      }
+    ]
+  }
