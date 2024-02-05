@@ -1,12 +1,15 @@
 import os
-import json
 import subprocess
 from fastapi import FastAPI
 from typing import Optional
+from pydantic import BaseModel
 
 app = FastAPI()
 
 
+class ScriptInput(BaseModel):
+    script_input: str
+    
 # 在 FastAPI 应用启动时，读取脚本目录并安装必要的依赖
 async def startup_event():
     script_dirs = [d for d in os.listdir("./data") if os.path.isdir(os.path.join("./data", d))]
