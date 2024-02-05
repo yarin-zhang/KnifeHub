@@ -12,6 +12,6 @@ uvicorn main:app --host 0.0.0.0 --port 9080 --reload
 ## 生产运行
 
 ```
-docker build -t myapp .
-docker run -p 80:80 myapp
+docker build -t knifehub .
+docker run -p 9080:9080 knifehub
 ```

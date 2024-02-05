@@ -1,3 +1,4 @@
+import os
 import json
 import subprocess
 from fastapi import FastAPI
@@ -5,28 +6,24 @@ from typing import Optional
 
 app = FastAPI()
 
-# 在 FastAPI 应用启动时，读取配置文件并安装必要的依赖
-async def startup_event():
-    # 读取配置文件
-    with open("./data/config.json") as f:
-        config = json.load(f)
 
-    # 安装必要的依赖
-    for script in config["scripts"]:
-        if script["install_on_startup"]:
-            subprocess.run(["pip", "install", "-r", f"./data/{script['name']}/requirements.txt"])
+# 在 FastAPI 应用启动时，读取脚本目录并安装必要的依赖
+async def startup_event():
+    script_dirs = [d for d in os.listdir("./data") if os.path.isdir(os.path.join("./data", d))]
+
+    # 为每个脚本目录安装必要的依赖
+    for script_dir in script_dirs:
+        subprocess.run(["pip", "install", "-r", f"./data/{script_dir}/requirements.txt"])
 
 app.add_event_handler("startup", startup_event)
 
 # 添加 API 端点，让用户可以通过 API 请求来列出所有脚本
 @app.get("/scripts")
 async def list_scripts_endpoint():
-    # 读取配置文件
-    with open("./data/config.json") as f:
-        config = json.load(f)
+    # 读取 ./data 目录下的所有目录
+    script_dirs = [d for d in os.listdir("./data") if os.path.isdir(os.path.join("./data", d))]
+    return {"scripts": script_dirs}
 
-    # 返回脚本列表
-    return {"scripts": [script["name"] for script in config["scripts"]]}
 
 # 添加 API 端点，让用户可以通过 API 请求来运行脚本
 @app.post("/run/{script_name}")
